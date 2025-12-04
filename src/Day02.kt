@@ -33,14 +33,28 @@ fun main() {
         return invalidIDTotal
     }
 
-    fun part2(input: List<String>): Int {
-        return 0
+    fun part2(input: List<String>): Long {
+        val ranges = parseInput(input[0])
+        var invalidIDTotal: Long = 0
+
+        for (range in ranges) {
+            for(i in range.first .. range.second) {
+                val stringID = i.toString()
+                val testString = (stringID+stringID).drop(1).dropLast(1)
+
+                if(testString.contains(stringID)) {
+                    invalidIDTotal += i
+                }
+            }
+        }
+        return invalidIDTotal
     }
 
     val testInput = readInput("Day02_test")
     check(part1(testInput) == 1227775554L)
+    check(part2(testInput) == 4174379265L)
 
     val input = readInput("Day02")
     println(part1(input))
-//    println(part2(input))
+    println(part2(input))
 }
