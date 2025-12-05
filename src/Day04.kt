@@ -18,7 +18,36 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
+        var movableRolls = 0
+        var grid = input.toMutableList()
+
+        while(true) {
+            var rollsToRemove = mutableListOf<Pair<Int, Int>>()
+
+            for( (yIndex, y) in grid.withIndex()) {
+                for( (xIndex, x) in grid[yIndex].withIndex()) {
+                    if(x == '@') {
+                        val surroundingRolls = checkSurroundingsInGrid(grid, xIndex, yIndex)
+                        if(surroundingRolls < 4) {
+                            rollsToRemove.add(Pair(xIndex, yIndex))
+                        }
+                    }
+                }
+            }
+
+            movableRolls += rollsToRemove.count()
+            if(rollsToRemove.isEmpty()) {
+                break
+            } else {
+                for(roll in rollsToRemove) {
+                    var string = grid[roll.second].toCharArray()
+                    string[roll.first] = '.'
+                    grid[roll.second] = String(string)
+                }
+            }
+        }
+
+        return movableRolls
     }
 
     // Test if implementation meets criteria from the description, like:
@@ -27,11 +56,12 @@ fun main() {
     // Or read a large test input from the `src/Day01_test.txt` file:
     val testInput = readInput("Day04_test")
     check(part1(testInput) == 13)
+    check(part2(testInput) == 43)
 
     // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day04")
     part1(input).println()
-//    part2(input).println()
+    part2(input).println()
 }
 
 fun checkSurroundingsInGrid(grid: List<String>, xIndex: Int, yIndex: Int): Int {
