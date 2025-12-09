@@ -16,15 +16,41 @@ fun main() {
     }
 
     fun part2(input: List<String>): Long {
-        return 0
+        val inventory = parseInput(input)
+
+        val sortedRange = inventory.ranges.sortedBy { it.first }
+        val mergedRanges = mutableListOf<LongRange>()
+        var currentMergedRange = sortedRange[0]
+
+        for (i in 1 until sortedRange.size) {
+            val nextRange = sortedRange[i]
+            if(currentMergedRange.last >= nextRange.first - 1) {
+                currentMergedRange = currentMergedRange.first..maxOf(currentMergedRange.last, nextRange.last)
+            } else {
+                // We have a new range
+                mergedRanges.add(currentMergedRange)
+                currentMergedRange = nextRange
+            }
+        }
+
+        if(!currentMergedRange.isEmpty()) {
+            mergedRanges.add(currentMergedRange)
+        }
+
+        val totalFreshIngredients = mergedRanges
+            .map{ (it.last+1) - it.first }
+            .reduce { acc, next -> acc + next }
+
+        return totalFreshIngredients
     }
 
     val testInput = readInput("Day05_test")
     check(part1(testInput) == 3L)
+    check(part2(testInput) == 14L)
 
     val input = readInput("Day05")
     println(part1(input))
-//    println(part2(input))
+    println(part2(input))
 }
 
 data class FoodInventory(val ranges: List<LongRange>, val ingredients: List<Long>)
