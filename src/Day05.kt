@@ -1,4 +1,16 @@
 fun main() {
+    fun parseInput(input: List<String>): FoodInventory {
+        val (rawRanges, ids) = input.chunkedBy { it.isBlank() }
+        val ranges = rawRanges.map { line ->
+            val (a, b) = line.split("-")
+                .map { it.toLong() }
+            a..b
+        }
+
+        val index = ids.map { it.toLong() }
+        return FoodInventory(ranges, index)
+    }
+
     fun part1(input: List<String>): Long {
         val inventory = parseInput(input)
         var freshIngredients = 0L
@@ -55,17 +67,6 @@ fun main() {
 
 data class FoodInventory(val ranges: List<LongRange>, val ingredients: List<Long>)
 
-fun parseInput(input: List<String>): FoodInventory {
-    val (rawRanges, ids) = input.chunkedBy { it.isBlank() }
-    val ranges = rawRanges.map { line ->
-        val (a, b) = line.split("-")
-            .map { it.toLong() }
-        a..b
-    }
-
-    val index = ids.map { it.toLong() }
-    return FoodInventory(ranges, index)
-}
 
 fun <T> List<T>.chunkedBy(selector:(T) -> Boolean): List<List<T>> =
     fold(mutableListOf(mutableListOf<T>())) { accumulator, item ->
